@@ -25,8 +25,22 @@ class Program {
             switch (command.ToLower())
             {
                 case "unpack":
-                    Console.WriteLine("unpacking shit not done");
+                {
+                    if (!File.Exists(filePath))
+                    {
+                        Console.WriteLine($"File {filePath} does not exist!");
+                        return;
+                    }
+                    
+                    string outputDir = Path.Combine(
+                        Path.GetDirectoryName(filePath),
+                        Path.GetFileNameWithoutExtension(filePath) + "_unpacked"
+                    );
+                    
+                    Console.WriteLine($"Unpacking {filePath} to {outputDir}...");
+                    UnpackResourceFile(filePath, outputDir);
                     break;
+                }
                 case "repack":
                     Console.WriteLine("repacking shit not done");
                     break;
@@ -46,7 +60,7 @@ class Program {
                     }
                     CreateDataResourceFiles(args[1], args[2]);
                     break;
-                }
+                }    
                 default:
                     Console.WriteLine($"Unknown command: {command}");
                     break;
@@ -112,4 +126,70 @@ class Program {
             }
         }
     }
-}
+
+    private static void UnpackResourceFile(string datFile, string outputDirectory)
+    {
+        var resourceFile = new ResourceFile(datFile);
+        var tree = resourceFile.Scan();
+        
+        Directory.CreateDirectory(outputDirectory);
+        
+        var resources = tree.GetResourceListing();
+        
+        foreach (var resource in resources)
+        {
+            try
+            {
+                string resourcePath = Path.Combine(outputDirectory, resource.Key);
+                string resourceDir = Path.GetDirectoryName(resourcePath);
+                
+                if (!Directory.Exists(resourceDir))
+                {
+                    Directory.CreateDirectory(resourceDir);
+                }
+
+                string extension = GetResourceExtension(resource.Value.Identifier);
+                resourcePath = Path.ChangeExtension(resourcePath, extension);
+
+                resource.Value.Export(resourcePath);
+
+                Console.WriteLine($"Extracted: {resource.Key} -> {resourcePath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to extract {resource.Key}: {ex.Message}");
+            }
+        }
+    }
+
+    private static string GetResourceExtension(ResourceTypeIdentifier identifier)
+    {
+        return identifier switch
+        {
+            ResourceTypeIdentifier.Xml => ".xml",
+            ResourceTypeIdentifier.TextureBMP => ".bmp",
+            ResourceTypeIdentifier.TextureGIF => ".gif",
+            ResourceTypeIdentifier.TextureJPG => ".jpg",
+            ResourceTypeIdentifier.TexturePNG => ".png",
+            ResourceTypeIdentifier.SampleInfo => ".sinfo",
+            ResourceTypeIdentifier.SampleWAV => ".wav",
+            ResourceTypeIdentifier.SampleMP3 => ".mp3",
+            ResourceTypeIdentifier.SampleOGG => ".ogg",
+            ResourceTypeIdentifier.Font => ".font",
+            ResourceTypeIdentifier.VideoH264 => ".mp4",
+            ResourceTypeIdentifier.AnimationGroup => ".anim",
+            ResourceTypeIdentifier.CompositionGroup => ".comp",
+            ResourceTypeIdentifier.FilmGroup => ".film",
+            ResourceTypeIdentifier.Area => ".area",
+            ResourceTypeIdentifier.TileSet => ".tiles",
+            ResourceTypeIdentifier.Map => ".map",
+            ResourceTypeIdentifier.Object => ".obj",
+            ResourceTypeIdentifier.Binding => ".bind",
+            ResourceTypeIdentifier.LevelDependencies => ".lvldep",
+            ResourceTypeIdentifier.InputRecording => ".input",
+            ResourceTypeIdentifier.Null => ".null",
+            ResourceTypeIdentifier.Unknown => ".unknown",
+            _ => ".bin"  // uhh in case of unknown files
+        };
+    }
+}       
