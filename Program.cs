@@ -13,7 +13,7 @@ class Program {
     {
         if (args.Length < 2)
         {
-            Console.WriteLine("Usage: OrcaTools <command> <sonicorca.dat>\nAvailable Commands:\nunpack - unpacks the sonicorca.dat file\nrepack - repacks the sonicorca.dat file\nload -  loads the sonicorca.dat file (MAINLY FOR TESTING LOL)\ncreate - creates .dat files from directories");
+            Console.WriteLine("Usage: OrcaTools <command> <sonicorca.dat>\nAvailable Commands:\nunpack - unpacks the sonicorca.dat file\nrepack - repacks the sonicorca.dat file\nload -  loads the sonicorca.dat file (MAINLY FOR TESTING LOL)");
             return;
         }
 
@@ -49,16 +49,6 @@ class Program {
                     string directoryName = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
                     LoadResourceFiles(Path.Combine(directoryName, "data"));
                     TraceResourceTree(ResourceTree);
-                    break;
-                }    
-                case "create":
-                {
-                    if (args.Length < 3)
-                    {
-                        Console.WriteLine("Usage: OrcaTools create <input_directory> <output_directory>");
-                        return;
-                    }
-                    CreateDataResourceFiles(args[1], args[2]);
                     break;
                 }    
                 default:
