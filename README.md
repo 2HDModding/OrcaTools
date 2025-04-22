@@ -1,6 +1,6 @@
 # OrcaTools
 
-* Tools made to read sonicorca.dat easier.
+A tool to read, unpack, and repack the sonicorca.dat file.
 
 # Commands
 
