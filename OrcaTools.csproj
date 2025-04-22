@@ -9,8 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="SonicOrca">
+      <HintPath>lib\SonicOrca.dll</HintPath>
+    </Reference>
     <Reference Include="SonicOrca.Resources">
-      <HintPath>..\..\GitHub\SonicOrca\SonicOrca.Resources\bin\Debug\SonicOrca.Resources.dll</HintPath>
+      <HintPath>lib\SonicOrca.Resources.dll</HintPath>
     </Reference>
   </ItemGroup>
 
